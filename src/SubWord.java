@@ -39,16 +39,14 @@ public class SubWord implements Comparable<SubWord> {
      * @return -int if this.rootWord is less than other.rootWord, 0 if both
      * are equal, +int if this.rootWord is greater than other.rootWord
      */
-    public int compareTo(SubWord other)	{
-        //TODO: override this invalid return statement
-        return 0;
+    public int compareTo(SubWord other){
+        return getRoot().compareTo(other.getRoot());
     }
 
     /**
      * @return This SubWord in root = sub1 + sub2 format
      */
     public String toString()	{
-        //TODO: define this method to return "rootWord = subWord1 + subWord2"
-        return "";
+        return getRoot() + " = " + getSubWords();
     }
 }
