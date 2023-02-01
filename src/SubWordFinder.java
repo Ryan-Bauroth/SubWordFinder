@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /** TODO add javadoc
@@ -8,6 +9,15 @@ public class SubWordFinder implements WordFinder{
     public static void main(String[] args) {
 
     }
+    private ArrayList<ArrayList<String>> dict;
+
+    public SubWordFinder(){
+        dict = new ArrayList<>();
+        for(int i = 0; i < 26; i++)
+            dict.add(new ArrayList<>());
+        populateDictionary();
+    }
+
     /**
      * Populates the dictionary from the text file contents
      * The dictionary object should contain 26 buckets, each
@@ -50,5 +60,8 @@ public class SubWordFinder implements WordFinder{
     @Override
     public boolean inDictionary(String word) {
         return false;
+    }
+    private String binarySearch(ArrayList<String> al){
+        return null;
     }
 }
