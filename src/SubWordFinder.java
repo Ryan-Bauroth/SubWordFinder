@@ -1,17 +1,18 @@
-import java.lang.reflect.Array;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
 
-/** TODO add javadoc
+/**Program to find subwords from a list
  * @Author Ryfi
  * @Version 02.09.23
  */
 public class SubWordFinder implements WordFinder{
-    public static void main(String[] args) {
+    private final ArrayList<ArrayList<String>> dict;
+    private final String ALPHA = "abcdefghijklmnopqrstuvwxyz";
 
-    }
-    private ArrayList<ArrayList<String>> dict;
-
-    public SubWordFinder(){
+    public SubWordFinder() throws FileNotFoundException {
         dict = new ArrayList<>();
         for(int i = 0; i < 26; i++)
             dict.add(new ArrayList<>());
@@ -26,8 +27,17 @@ public class SubWordFinder implements WordFinder{
      * of the nature of the text file words.txt
      */
     @Override
-    public void populateDictionary() {
-
+    public void populateDictionary() throws FileNotFoundException {
+        String filename = "new_scrabble.txt";
+        Scanner in = new Scanner(new File(filename));
+        while(in.hasNext()) {
+            String word = in.nextLine();
+            dict.get(ALPHA.indexOf(word.substring(0,1).toLowerCase())).add(word);
+        }
+        in.close();
+        for (ArrayList<String> strings : dict) {
+            Collections.sort(strings);
+        }
     }
     /**
      * Retrieve all SubWord objects from the dictionary.
@@ -44,7 +54,21 @@ public class SubWordFinder implements WordFinder{
      */
     @Override
     public ArrayList<SubWord> getSubWords() {
-        return null;
+        ArrayList<SubWord> Sub = new ArrayList<>();
+        String front = "", back = "";
+        for (ArrayList<String> strings : dict) {
+            for (String word : strings) {
+                for (int i = 2; i < word.length() - 1; i++) {
+                    front = word.substring(0, i);
+                    back = word.substring(i);
+                    if (inDictionary(front) && inDictionary(back)) {
+                        SubWord m = new SubWord(word, front, back);
+                        Sub.add(m);
+                    }
+                }
+            }
+        }
+        return Sub;
     }
     /**
      * Look through the entire dictionary object to see if
@@ -59,9 +83,42 @@ public class SubWordFinder implements WordFinder{
      */
     @Override
     public boolean inDictionary(String word) {
-        return false;
+        int index = ALPHA.indexOf(word.toLowerCase().substring(0, 1));
+        return binarySearch(dict.get(index), word, dict.get(index).size()-1, 0) >= 0;
     }
-    private String binarySearch(ArrayList<String> al){
-        return null;
+    private int binarySearch(ArrayList<String> arr, String word, int high, int low) {
+        int mid;
+        if(low <= high){
+            mid = (low+high)/ 2;
+            if(arr.get(mid).equals(word)){
+                return mid;
+            }
+            else if(arr.get(mid).compareTo(word) < 0){
+                return binarySearch(arr, word, high, mid+1);
+            }
+            else{
+                return binarySearch(arr, word, mid-1, low);
+            }
+        }
+        return -1;
+    }
+    private String occurrences(ArrayList<SubWord> arr){
+        ArrayList<String> roots = new ArrayList<>();
+        ArrayList<Integer> counts = new ArrayList<>();
+        for(SubWord word : arr){
+            if(roots.contains(word.getRoot())){
+                counts.set(roots.indexOf(word.getRoot()), counts.get(roots.indexOf(word.getRoot())) + 1);
+            }
+            else{
+                roots.add(word.getRoot());
+                counts.add(1);
+            }
+        }
+        return roots.get(counts.indexOf(Collections.max(counts)));
+    }
+    public static void main(String[] args) throws FileNotFoundException {
+        SubWordFinder app = new SubWordFinder();
+        System.out.println(app.occurrences(app.getSubWords()));
+        //System.out.println("The word that has the most split words is: " + app.occurrences(app.getSubWords()));
     }
 }

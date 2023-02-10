@@ -5,6 +5,7 @@
  * @version December 7, 2014
  */
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 
@@ -16,7 +17,7 @@ public interface WordFinder {
      * The String objects in the buckets are sorted A-Z because
      * of the nature of the text file words.txt
      */
-    void populateDictionary();
+    void populateDictionary() throws FileNotFoundException;
 
     /**
      * Retrieve all SubWord objects from the dictionary.
